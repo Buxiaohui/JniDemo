@@ -9,7 +9,6 @@ cmake_minimum_required(VERSION 3.4.1)
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
-
 add_library( # Sets the name of the library.
              native-lib
 
@@ -18,6 +17,15 @@ add_library( # Sets the name of the library.
 
              # Provides a relative path to your source file(s).
              src/main/cpp/native-lib.cpp )
+
+add_library( # Sets the name of the library.
+             native_mine_lib
+
+             # Sets the library as a shared library.
+             SHARED
+
+             # Provides a relative path to your source file(s).
+             src/main/cppMine/native_mine_lib.cpp )
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -42,3 +50,13 @@ target_link_libraries( # Specifies the target library.
                        # Links the target library to the log library
                        # included in the NDK.
                        ${log-lib} )
+
+target_link_libraries( # Specifies the target library.
+                       native_mine_lib
+
+                       # Links the target library to the log library
+                       # included in the NDK.
+                       ${log-lib} )
+# spcifies a path to native header files
+#demo 没有自动生成，是按照官方文章自己加的，不知道干什么的……，加上以后没有任何变化？why？应该有什么变化？
+include_directories(src/main/cpp/include/)
