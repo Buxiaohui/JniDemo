@@ -1,4 +1,4 @@
-package com.fly.bxh.jnidemo;
+package com.fly.bxh.jnidemo.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,13 +10,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.fly.bxh.jnidemo.R;
+import com.fly.bxh.jnidemo.bean.JNIBean;
+import com.fly.bxh.jnidemo.jniInterface.JniInterface;
+
 public class MainActivity extends AppCompatActivity {
 
-    // Used to load the 'native-lib' library on application startup.
-    static {
-        System.loadLibrary("native_mine_lib");
-        System.loadLibrary("native-lib");
-    }
+//    // Used to load the 'native-lib' library on application startup.
+//    static {
+//        System.loadLibrary("native_mine_lib");
+//        System.loadLibrary("native-lib");
+//    }
 
     TextView tv, tv1;
 
@@ -39,8 +43,8 @@ public class MainActivity extends AppCompatActivity {
         // Example of a call to a native method
         tv = (TextView) findViewById(R.id.sample_text);
         tv1 = (TextView) findViewById(R.id.sample_text1);
-        tv.setText(stringFromJNI());
-        tv1.setText(stringFromMineJNI());
+        tv.setText(JniInterface.stringFromJNI());
+        tv1.setText(JniInterface.stringFromMineJNI());
     }
 
     @Override
@@ -49,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         menu.add(0, 0, 0, "test add");
         menu.add(0, 1, 1, "test int[]");
+        menu.add(0, 2, 2, "test transfer object");
         return true;
     }
 
@@ -64,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_settings:
                 break;
             case 0:
-                int temp = addFromMineJNI(11,12);
+                int temp = JniInterface.addFromMineJNI(11,12);
                 tv1.setText("11+12="+temp);
                 break;
             case 1:
@@ -73,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 for (int i = 0; i < a.length; i++) {
                     stringBufferA.append(a[i]).append("  ");
                 }
-                int[] b =  intArrayFromMineJNI(a);
+                int[] b =  JniInterface.intArrayFromMineJNI(a);
                 StringBuffer stringBufferB = new StringBuffer();
                 if(b!= null){
                     for (int i = 0; i < b.length; i++) {
@@ -85,20 +90,37 @@ public class MainActivity extends AppCompatActivity {
 
                 tv1.setText(stringBufferA.toString()+"  ->"+ stringBufferB.toString());
                 break;
+            case 2:
+                testTransferJniObject();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
-     */
-    public native String stringFromJNI();
+//    /**
+//     * A native method that is implemented by the 'native-lib' native library,
+//     * which is packaged with this application.
+//     */
+//    public native String stringFromJNI();
+//
+//    public native String stringFromMineJNI();
+//
+//    public native int addFromMineJNI(int x, int y);
+//
+//    public native int[] intArrayFromMineJNI(int[] intArray);
 
-    public native String stringFromMineJNI();
-
-    public native int addFromMineJNI(int x, int y);
-
-    public native int[] intArrayFromMineJNI(int[] intArray);
+    private void testTransferJniObject(){
+        JNIBean bean = new JNIBean();
+        JNIBean.jb_int = 11;
+        bean.jb_boolean = false;
+        bean.jb_byte = 22;
+        bean.jb_short = 33;
+        bean.jb_long = 30000000000L;
+        bean.jb_float = 12.34f;
+        bean.jb_double = 56.789d;
+        bean.jb_str = "我是测试代码";
+        bean.jb_intArr = new int[]{1, 23, 456, 78, 9};
+        JniInterface.transferData(bean);
+    }
 }
